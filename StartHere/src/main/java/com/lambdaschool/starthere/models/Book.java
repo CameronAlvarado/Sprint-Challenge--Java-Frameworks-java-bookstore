@@ -9,7 +9,7 @@ import java.util.List;
 
 @Loggable
 @Entity
-@Table(name = "book")
+@Table(name = "books")
 public class Book extends Auditable
 {
     @Id
@@ -25,14 +25,14 @@ public class Book extends Auditable
     @Column
     private int copy;
 
-    @ManyToMany(mappedBy = "books")
-    @JsonIgnoreProperties("books")
-    private List<Author> authors = new ArrayList<>();
+//    @ManyToMany(mappedBy = "books")
+//    @JsonIgnoreProperties("books")
+//    private List<Author> authors = new ArrayList<>();
 
-//    @OneToOne(mappedBy = "book",
-//            cascade = CascadeType.ALL)
-//    @JsonIgnoreProperties("book")
-//    private Wrote wrote;
+    @OneToMany(mappedBy = "book",
+            cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("book")
+    private List<Wrote> wrote = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "sectionid")
@@ -48,7 +48,7 @@ public class Book extends Auditable
         this.title = title;
         this.ISBN = ISBN;
         this.copy = copy;
-        this.authors = authors;
+//        this.authors = authors;
         this.section = section;
     }
 
@@ -92,14 +92,25 @@ public class Book extends Auditable
         this.copy = copy;
     }
 
-    public List<Author> getAuthors()
+//    public List<Author> getAuthors()
+//    {
+//        return authors;
+//    }
+//
+//    public void setAuthors(List<Author> authors)
+//    {
+//        this.authors = authors;
+//    }
+
+
+    public List<Wrote> getWrote()
     {
-        return authors;
+        return wrote;
     }
 
-    public void setAuthors(List<Author> authors)
+    public void setWrote(List<Wrote> wrote)
     {
-        this.authors = authors;
+        this.wrote = wrote;
     }
 
     public Section getSection()

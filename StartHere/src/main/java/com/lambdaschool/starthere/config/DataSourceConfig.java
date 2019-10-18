@@ -64,6 +64,7 @@ public class DataSourceConfig
             myUrlString = "jdbc:postgresql://" + System.getenv("MYDBHOST") + ":5432/" + System.getenv("MYDBNAME");
             myDriverClass = "org.postgresql.Driver";
             myDBUser = System.getenv("MYDBUSER");
+//            myDBPassword = System.getenv("MYDBPASSWORD");
             myDBPassword = System.getenv("MYDBPASSWORD");
         } else
         {

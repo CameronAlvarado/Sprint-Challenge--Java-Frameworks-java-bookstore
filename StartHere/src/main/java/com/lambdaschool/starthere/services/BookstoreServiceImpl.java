@@ -1,11 +1,15 @@
 package com.lambdaschool.starthere.services;
 
+import com.lambdaschool.starthere.exceptions.ResourceFoundException;
+import com.lambdaschool.starthere.exceptions.ResourceNotFoundException;
 import com.lambdaschool.starthere.models.Author;
 import com.lambdaschool.starthere.models.Book;
 import com.lambdaschool.starthere.repository.AuthorRepository;
 import com.lambdaschool.starthere.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -22,18 +26,18 @@ public class BookstoreServiceImpl implements BookstoreService
     private AuthorRepository authrepo;
 
     @Override
-    public List<Book> findAllBooks()
+    public ArrayList<Book> findAllBooks(Pageable pageable)
     {
-        List<Book> list = new ArrayList<>();
-        bookrepo.findAll().iterator().forEachRemaining(list::add);
+        ArrayList<Book> list = new ArrayList<>();
+        bookrepo.findAll(pageable).iterator().forEachRemaining(list::add);
         return list;
     }
 
     @Override
-    public List<Author> findAllAuthors()
+    public List<Author> findAllAuthors(Pageable pageable)
     {
         List<Author> list = new ArrayList<>();
-        authrepo.findAll().iterator().forEachRemaining(list::add);
+        authrepo.findAll(pageable).iterator().forEachRemaining(list::add);
         return list;
     }
 
@@ -41,7 +45,7 @@ public class BookstoreServiceImpl implements BookstoreService
     public Book update(Book book, long id)
     {
         Book currentBook = bookrepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Book id: " + Long.toString(id) + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Book id: " + Long.toString(id) + " not found."));
 
         if (book.getTitle() != null)
         {
@@ -53,15 +57,33 @@ public class BookstoreServiceImpl implements BookstoreService
         return bookrepo.save(currentBook);
     }
 
+    @Override
+    public void addBookToAuthor(long bookid, long authorid) throws ResourceFoundException
+    {
+        bookrepo.findById(bookid).orElseThrow(() -> new ResourceNotFoundException("Book id " + bookid + " not found"));
+        authrepo.findById(authorid).orElseThrow(() -> new ResourceNotFoundException("Author id " + authorid + " not found"));
+
+        if (bookrepo.checkWroteCombo(bookid, authorid)
+                .getCount() <= 0)
+        {
+            bookrepo.insertWrote(bookid, authorid);
+        } else
+        {
+            throw new ResourceFoundException("Book and Author Combination Already Exists");
+        }
+    }
+
 //    @Override
-//    public void save(long bookid, long authorid)
+//    public void save(long bookid, long authorid)  throws ResourceNotFoundException
 //    {
-//        Book currentBook = bookrepo.findById(bookid);
-//        Author currentAuthor = authrepo.findById(authorid);
+////        Book currentBook = bookrepo.findById(bookid);
+////        Author currentAuthor = authrepo.findById(authorid);
 //
-//        if (bookrepo.findByTitle(currentBook.getTitle()) != null && authrepo.findByFname(currentAuthor.getFname()) != null)
+//        if (bookrepo.findById(bookid).isPresent() && authrepo.findById(authorid).isPresent())
 //        {
-//            throw new ResourceFoundException(student.getStudname() + " is alreay taken! ");
+//            newStudent.setStudname(student.getStudname());
+//
+//            return studrepos.save(newStudent);
 //        } else {
 //
 //            newStudent.setStudname(student.getStudname());
@@ -70,9 +92,12 @@ public class BookstoreServiceImpl implements BookstoreService
 //        }
 //    }
 
+    @Transactional
     @Override
     public void deleteBook(long id)
     {
+        bookrepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book id " + id + " not found"));
 
+        bookrepo.deleteById(id);
     }
 }

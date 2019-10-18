@@ -158,7 +158,7 @@
 
     <build>
 <!--        <finalName>${project.artifactId}</finalName>-->
-        <finalName>jrmmba-starthere</finalName>
+        <finalName>cameron-sprint-java-frameworks</finalName>
 
         <plugins>
             <plugin>

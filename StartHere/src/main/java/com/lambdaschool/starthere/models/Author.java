@@ -7,30 +7,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "author")
+@Table(name = "authors")
 public class Author extends Auditable
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long authorid;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String lname;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String fname;
 
-    @ManyToMany
-    @JoinTable(name = "wrote",
-            joinColumns = {@JoinColumn(name = "authorid")},
-            inverseJoinColumns = {@JoinColumn(name = "bookid")})
-    @JsonIgnoreProperties("authors")
-    private List<Book> books = new ArrayList<>();
+//    @ManyToMany
+//    @JoinTable(name = "wrote",
+//            joinColumns = {@JoinColumn(name = "authorid")},
+//            inverseJoinColumns = {@JoinColumn(name = "bookid")})
+//    @JsonIgnoreProperties("authors")
+//    private List<Book> books = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "user",
-//               cascade = CascadeType.ALL)
-//    @JsonIgnoreProperties("user")
-//    private List<UserRoles> userroles = new ArrayList<>();
+    @OneToMany(mappedBy = "author",
+               cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("author")
+    private List<Wrote> wrote = new ArrayList<>();
 
     public Author()
     {
@@ -40,7 +40,7 @@ public class Author extends Auditable
     {
         this.lname = lname;
         this.fname = fname;
-        this.books = books;
+//        this.books = books;
     }
 
     public long getAuthorid()
@@ -73,14 +73,25 @@ public class Author extends Auditable
         this.fname = fname;
     }
 
-    public List<Book> getBooks()
+//    public List<Book> getBooks()
+//    {
+//        return books;
+//    }
+//
+//    public void setBooks(List<Book> books)
+//    {
+//        this.books = books;
+//    }
+
+
+    public List<Wrote> getWrote()
     {
-        return books;
+        return wrote;
     }
 
-    public void setBooks(List<Book> books)
+    public void setWrote(List<Wrote> wrote)
     {
-        this.books = books;
+        this.wrote = wrote;
     }
 
     @Override
@@ -90,7 +101,6 @@ public class Author extends Auditable
                 "authorid=" + authorid +
                 ", lname='" + lname + '\'' +
                 ", fname='" + fname + '\'' +
-                ", books=" + books +
                 ", createdBy='" + createdBy + '\'' +
                 ", createdDate=" + createdDate +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +

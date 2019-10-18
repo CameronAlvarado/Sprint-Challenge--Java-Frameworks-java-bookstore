@@ -9,7 +9,7 @@ import java.util.List;
 
 @Loggable
 @Entity
-@Table(name = "section")
+@Table(name = "sections")
 public class Section extends Auditable
 {
     @Id
