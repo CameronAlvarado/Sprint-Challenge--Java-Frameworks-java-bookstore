@@ -34,6 +34,7 @@ public class DataSourceConfig
             logger.error("Environment Variable " + envvar + " missing");
             stop = true;
         }
+        logger.info("Environment Variable " + envvar + " is " + System.getenv(envvar));
     }
 
     @Bean(name = "dsCustom")
@@ -49,7 +50,7 @@ public class DataSourceConfig
         if (dbValue.equalsIgnoreCase("POSTGRESQL"))
         {
             checkEnvironmentVariable("MYDBHOST");
-            checkEnvironmentVariable("MYDBNAME");
+//            checkEnvironmentVariable("MYDBNAME");
             checkEnvironmentVariable("MYDBUSER");
             checkEnvironmentVariable("MYDBPASSWORD");
 
@@ -60,11 +61,11 @@ public class DataSourceConfig
                                                       (ExitCodeGenerator) () -> 1);
                 System.exit(exitCode);
             }
-
-            myUrlString = "jdbc:postgresql://" + System.getenv("MYDBHOST") + ":5432/" + System.getenv("MYDBNAME");
+            String dbname = System.getenv("MYDBNAME") != null ? System.getenv("MYDBNAME") : "bookstore";
+//            myUrlString = "jdbc:postgresql://" + System.getenv("MYDBHOST") + ":5432/" + System.getenv("MYDBNAME");
+            myUrlString = "jdbc:postgresql://" + System.getenv("MYDBHOST") + ":5432/" + dbname;
             myDriverClass = "org.postgresql.Driver";
             myDBUser = System.getenv("MYDBUSER");
-//            myDBPassword = System.getenv("MYDBPASSWORD");
             myDBPassword = System.getenv("MYDBPASSWORD");
         } else
         {
@@ -78,7 +79,9 @@ public class DataSourceConfig
         logger.info("Database URL is " + myUrlString);
         return DataSourceBuilder.create()
                                 .username(myDBUser)
+//                                  .username("postgres")
                                 .password(myDBPassword)
+//                                .password("lambda7")
                                 .url(myUrlString)
                                 .driverClassName(myDriverClass)
                                 .build();

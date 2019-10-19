@@ -1,11 +1,13 @@
 package com.lambdaschool.starthere.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lambdaschool.starthere.logging.Loggable;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Loggable
 @Entity
 @Table(name = "authors")
 public class Author extends Auditable
@@ -14,10 +16,10 @@ public class Author extends Auditable
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long authorid;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String lname;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String fname;
 
 //    @ManyToMany
